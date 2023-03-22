@@ -24,7 +24,7 @@ def start_webview(username, password):
     import time
     time.sleep(7)
     webview.create_window("Label Studio", "http://localhost:8080/")
-    webview.start()
+    webview.start(debug=True)
 
 def ask_credentials() -> Tuple[str]:
     # assistant.add_text("Create user", Size.Large)
@@ -39,6 +39,6 @@ if __name__ == "__main__":
     os.environ["LABEL_STUDIO_DISABLE_SIGNUP_WITHOUT_LINK"] = "true"
     os.environ["LABEL_STUDIO_USERNAME"] = username
     os.environ["LABEL_STUDIO_PASSWORD"] = password
-    proc = subprocess.Popen(["label-studio"])
+    proc = subprocess.Popen(["label-studio", "-b"])
     start_webview(username, password)
     proc.terminate()

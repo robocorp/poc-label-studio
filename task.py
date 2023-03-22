@@ -40,5 +40,5 @@ if __name__ == "__main__":
     os.environ["LABEL_STUDIO_USERNAME"] = username
     os.environ["LABEL_STUDIO_PASSWORD"] = password
     proc = subprocess.Popen(["label-studio"])
-    start_webview()
+    start_webview(username, password)
     proc.terminate()

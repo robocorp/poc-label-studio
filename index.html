@@ -9,14 +9,30 @@
         <script src="https://unpkg.com/label-studio@latest/build/static/js/main.js"></script>
 
         <script>
-        const root = document.querySelector('#label-studio');
+        const url = "http://localhost:8000/annotations";
+        let data = {}
+
+        fetch(url, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        })
+        .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+                })
+                .then(responseText => {
+                console.log(responseText);
+                data = responseText;
+                const root = document.querySelector('#label-studio');
         const labelStudio = new LabelStudio('label-studio', {
             config: `
                 <View>
                 <Image name="img" value="$image"></Image>
                 <RectangleLabels name="tag" toName="img">
-                    <Label value="Hello"></Label>
-                    <Label value="World"></Label>
+                    <Label value="${data['tag1']}"></Label>
+                    <Label value="${data['tag2']}"></Label>
                 </RectangleLabels>
                 </View>
             `,
@@ -40,7 +56,8 @@
                 predictions: [],
                 id: 1,
                 data: {
-                    "image": "https://htx-misc.s3.amazonaws.com/opensource/label-studio/examples/images/nick-owuor-astro-nic-visuals-wDifg5xc9Z4-unsplash.jpg",
+                    // "image": "https://htx-misc.s3.amazonaws.com/opensource/label-studio/examples/images/nick-owuor-astro-nic-visuals-wDifg5xc9Z4-unsplash.jpg",
+                    "image": data["url"],
                     "tag": [{
                         "height": 10.458911419423693,
                         "rectanglelabels": [
@@ -81,6 +98,7 @@
                 });
             }
         });
+                })
         </script>
     </body>
 </html>

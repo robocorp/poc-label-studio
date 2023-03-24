@@ -1,0 +1,86 @@
+<html>
+    <body>
+        <!-- Include Label Studio stylesheet -->
+        <link href="https://unpkg.com/label-studio@latest/build/static/css/main.css" rel="stylesheet">
+
+        <div id="label-studio"></div>
+
+        <!-- Include the Label Studio library -->
+        <script src="https://unpkg.com/label-studio@latest/build/static/js/main.js"></script>
+
+        <script>
+        const root = document.querySelector('#label-studio');
+        const labelStudio = new LabelStudio('label-studio', {
+            config: `
+                <View>
+                <Image name="img" value="$image"></Image>
+                <RectangleLabels name="tag" toName="img">
+                    <Label value="Hello"></Label>
+                    <Label value="World"></Label>
+                </RectangleLabels>
+                </View>
+            `,
+            interfaces: [
+                "panel",
+                "update",
+                "controls",
+                "side-column",
+                "annotations:menu",
+                "annotations:add-new",
+                "annotations:delete",
+                "predictions:menu"
+            ],
+            user: {
+                pk: 1,
+                firstName: "James",
+                lastName: "Dean"
+            },
+            task: {
+                annotations: [],
+                predictions: [],
+                id: 1,
+                data: {
+                    "image": "https://htx-misc.s3.amazonaws.com/opensource/label-studio/examples/images/nick-owuor-astro-nic-visuals-wDifg5xc9Z4-unsplash.jpg",
+                    "tag": [{
+                        "height": 10.458911419423693,
+                        "rectanglelabels": [
+                            "Moonwalker"
+                        ],
+                        "rotation": 0,
+                        "width": 12.4,
+                        "x": 50.8,
+                        "y": 5.869797225186766
+                    }]
+                }
+            },
+            onLabelStudioLoad: function(LS) {
+                var c = LS.annotationStore.addAnnotation({
+                    userGenerate: true
+                });
+                LS.annotationStore.selectAnnotation(c.id);
+            },
+            onSubmitAnnotation: function(LS, annotation) {
+                const url = "http://localhost:8000/annotate";
+
+                fetch(url, {
+                    method: "POST",
+                    body: JSON.stringify(annotation),
+                    headers: { "Content-Type": "application/json" }
+                })
+                .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+                })
+                .then(responseText => {
+                console.log(responseText);
+                })
+                .catch(error => {
+                console.error(error);
+                });
+            }
+        });
+        </script>
+    </body>
+</html>
